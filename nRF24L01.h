@@ -1,12 +1,24 @@
-/*
- * nRF24L01.h
- *
- *  Created on: 23 февр. 2022 г.
- *      Author: alexm
+/*********************************************************************************
+   Original author: Alexandr Pochtovy<alex.mail.prime@gmail.com>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+ * 	nRF24L01.h
+ *  Created on: 23 feb 2022
  */
 
-#ifndef MYRF24_ALPHA_NRF24L01_H_
-#define MYRF24_ALPHA_NRF24L01_H_
+#ifndef _NRF24L01_H_
+#define _NRF24L01_H_
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -45,11 +57,12 @@ typedef struct nRF24_dev_t {
 	GPIO_TypeDef *CE_Port;
 	uint32_t CE_Pin;
 	nRF24_status devStatus;
-	uint8_t step;	//step for internal processing
-	uint8_t state;	//step for procedure processing
-	uint8_t statusChip;
-	uint8_t statusFIFO;
-	Line_t lineNumber;
+	uint8_t step;		//step for internal processing
+	uint8_t state;		//step for procedure processing
+	uint8_t statusChip;	//chip STATUS reg
+	uint8_t statusFIFO;	//FIFO status reg
+	Line_t lineNumber;	//line number receive
+	uint8_t rxSize;		//receive data size
 	uint8_t *const txp;
 	uint8_t *const rxp;
 } nRF24_dev;
@@ -80,7 +93,7 @@ uint8_t SetChannel(SPI_Conn *_spi, nRF24_dev *dev, uint8_t channel);
 
 uint8_t SetRF(SPI_Conn *_spi, nRF24_dev *dev, uint8_t mask);
 
-uint8_t ClearIRQ(SPI_Conn *_spi, nRF24_dev *dev);
+uint8_t ClearIRQ(SPI_Conn *_spi, nRF24_dev *dev, uint8_t irq);
 
 uint8_t SetAddrTX(SPI_Conn *_spi, nRF24_dev *dev, uint8_t *addr, uint8_t width);
 
@@ -122,10 +135,13 @@ uint8_t SwitchModeRX(SPI_Conn *_spi, nRF24_dev *dev);
 
 uint8_t RF24_Init (SPI_Conn *_spi, nRF24_dev *dev, nRF24_MainConfig_t *cfg);
 
+uint8_t RF24_IRQ_Processing(SPI_Conn *_spi, nRF24_dev *dev);
+
 uint8_t RF24_SendData (SPI_Conn *_spi, nRF24_dev *dev, uint8_t *data, uint8_t len);
+
 uint8_t RF24_ReceiveData (SPI_Conn *_spi, nRF24_dev *dev, uint8_t *data);
 //====================================================================================================
 #ifdef __cplusplus
 }
 #endif
-#endif /* MYRF24_ALPHA_NRF24L01_H_ */
+#endif /* _NRF24L01_H_ */
